@@ -1,92 +1,64 @@
 import { Button, Grid, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { Box } from "@mui/system";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useLogin, useUsers } from "../context/userContext";
-import * as Yup from "yup";
 import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { useAddUsers, useLogin } from "../context/userContext";
 
-const Login = () => {
+const SignUp = () => {
   const navigate = useNavigate();
-  const users = useUsers();
-  const [isError, setIsError] = useState(false);
+  const signUp = useAddUsers();
   const login = useLogin();
 
   const formik = useFormik({
     initialValues: {
+      name: "",
       email: "",
       password: "",
     },
     validationSchema: Yup.object({
+      name: Yup.string().required("required"),
       email: Yup.string().required("required"),
       password: Yup.string().required("required"),
     }),
 
     onSubmit: (values) => {
-      let isAuthenticated = false;
-      let foundUser;
-      users.map((user) => {
-        if (user.email === values.email && user.password === values.password) {
-          isAuthenticated = true;
-          foundUser = user;
-        }
-      });
-
-      if (isAuthenticated) {
-        login(foundUser);
-        navigate("/feed", { replace: true });
-      } else {
-        setIsError(true);
-      }
+      signUp({...values});
+      login({...values});
+      navigate("/feed", { replace: true });
     },
   });
 
-  const signupHandler = () => {
-    navigate("/signup");
-  };
-
   return (
     <Box sx={{ width: "100%", height: "100vh" }}>
-      <Grid container display="flex" justifyContent="flex-end" height="100%" px={{xs:'0.5rem', lg:'0rem'}}>
-        <Grid item xs={1} sx={{display:{xs:'none',lg:'flex'}}}></Grid>
+      <Grid container display="flex" justifyContent="flex-end" height="100%">
+        <Grid item xs={1}></Grid>
         <Grid
           item
-          lg={7}
-          xs={12}
-          display={{xs:'none', lg:'flex'}}
+          xs={7}
+          display="flex"
           justifyContent="center"
           alignItems="center"
           flexDirection="column"
           pb="2rem"
-          
         >
-          <Typography color="primary" fontSize={{xs:'1.5rem', lg:'3rem'}} >
+          <Typography color="primary" fontSize="3rem">
             SocialMedia Network
+          </Typography>
+          <Typography color="primary" fontSize="1rem">
+            Create New Account
           </Typography>
         </Grid>
         <Grid
           item
           lg={3}
-          xs={12}
           display="flex"
           justifyContent="center"
           alignItems="center"
           flexDirection="column"
         >
-          <Typography color="primary" fontSize={{xs:'1.5rem', lg:'3rem'}} display={{xs:'block', lg:'none'}}>
-            SocialMedia Network
-          </Typography>
-          <form
-            onSubmit={formik.handleSubmit}
-            onBlur={formik.handleBlur}
-            style={{ width: "100%" }}
-          >
-            {isError && (
-              <Typography color="red" fontSize="1rem" textAlign="center">
-                Email or password is incorrect
-              </Typography>
-            )}
+          <form onSubmit={formik.handleSubmit} onBlur={formik.handleBlur}>
             <TextField
               size="small"
               fullWidth
@@ -102,14 +74,30 @@ const Login = () => {
             {formik.touched.email && formik.errors.email ? (
               <Box color="red">{formik.errors.email}</Box>
             ) : null}
+
+            <TextField
+              size="small"
+              fullWidth
+              label="Name"
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              name="name"
+              sx={{
+                my: "0.5rem",
+              }}
+            />
+            {formik.touched.name && formik.errors.name ? (
+              <Box color="red">{formik.errors.name}</Box>
+            ) : null}
             <TextField
               size="small"
               fullWidth
               label="Password"
-              name="password"
               value={formik.values.password}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              name="password"
               sx={{
                 my: "0.5rem",
               }}
@@ -117,26 +105,31 @@ const Login = () => {
             {formik.touched.password && formik.errors.password ? (
               <Box color="red">{formik.errors.password}</Box>
             ) : null}
-            <Button
-              variant="contained"
-              name="submit"
-              type="submit"
+            <TextField
+              size="small"
               fullWidth
+              label="Confirm Password"
               sx={{
                 my: "0.5rem",
               }}
+            />
+            <Button
+              variant="contained"
+              fullWidth
+              name="submit"
+              type="submit"
+              sx={{
+                my: "1rem",
+              }}
             >
-              Login
+              Signup
             </Button>
           </form>
-          <Button fullWidth sx={{ fontSize: "0.7rem" }} onClick={signupHandler}>
-            Create New Account?
-          </Button>
         </Grid>
-        <Grid item xs={1} sx={{display:{xs:'none',lg:'flex'}}}></Grid>
+        <Grid item xs={1}></Grid>
       </Grid>
     </Box>
   );
 };
 
-export default Login;
+export default SignUp;
