@@ -98,6 +98,7 @@ const SignUp = () => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               name="password"
+              type='password'
               sx={{
                 my: "0.5rem",
               }}
@@ -108,6 +109,7 @@ const SignUp = () => {
             <TextField
               size="small"
               fullWidth
+              type='password'
               label="Confirm Password"
               sx={{
                 my: "0.5rem",

@@ -24,6 +24,8 @@ const ChatBot = () => {
   const loggedInUser = useLoggedUser();
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
+  const [generatedResponses, setGenaratedResponses] = useState([]);
+  const [pastUserInputs, setPastUserInputs] = useState([]);
   const ref = useRef();
 
   const logOut = useLogout();
@@ -50,11 +52,13 @@ const ChatBot = () => {
       setMessage("");
 
       fetch(
-        "http://ec2-54-169-87-142.ap-southeast-1.compute.amazonaws.com:8082/bot",
+        "http://ec2-3-0-181-36.ap-southeast-1.compute.amazonaws.com:8082/bot",
         {
           body: JSON.stringify({
             chat: message,
             user_name: loggedInUser.name,
+            past_user_inputs: pastUserInputs,
+            generated_responses: generatedResponses,
           }),
           method: "POST",
           headers: {
@@ -64,6 +68,8 @@ const ChatBot = () => {
       )
         .then((res) => res.json())
         .then((data) => {
+          setGenaratedResponses(data.generated_responses);
+          setPastUserInputs(data.past_user_inputs);
           setChat((prev) => [
             ...prev,
             {
@@ -84,11 +90,13 @@ const ChatBot = () => {
     const abortController = new AbortController();
 
     fetch(
-      "http://ec2-54-169-87-142.ap-southeast-1.compute.amazonaws.com:8082/bot",
+      "http://ec2-3-0-181-36.ap-southeast-1.compute.amazonaws.com:8082/bot",
       {
         body: JSON.stringify({
           chat: "Hi",
           user_name: loggedInUser.name,
+          past_user_inputs: "NULL",
+          generated_responses: "NULL",
         }),
         method: "POST",
         headers: {
@@ -99,6 +107,8 @@ const ChatBot = () => {
     )
       .then((res) => res.json())
       .then((data) => {
+        setGenaratedResponses(data.generated_responses);
+        setPastUserInputs(data.past_user_inputs);
         setChat((prev) => [
           ...prev,
           {
@@ -107,7 +117,7 @@ const ChatBot = () => {
           },
         ]);
       })
-      .catch((err) => {});
+      .catch((err) => console.log(err.message));
 
     return () => {
       abortController.abort();
@@ -122,14 +132,15 @@ const ChatBot = () => {
         message,
       },
     ]);
-    
 
     fetch(
-      "http://ec2-54-169-87-142.ap-southeast-1.compute.amazonaws.com:8082/bot",
+      "http://ec2-3-0-181-36.ap-southeast-1.compute.amazonaws.com:8082/bot",
       {
         body: JSON.stringify({
           chat: message,
           user_name: loggedInUser.name,
+          past_user_inputs: pastUserInputs,
+          generated_responses: generatedResponses,
         }),
         method: "POST",
         headers: {
@@ -139,6 +150,8 @@ const ChatBot = () => {
     )
       .then((res) => res.json())
       .then((data) => {
+        setGenaratedResponses(data.generated_responses);
+        setPastUserInputs(data.past_user_inputs);
         setChat((prev) => [
           ...prev,
           {
@@ -148,7 +161,7 @@ const ChatBot = () => {
         ]);
         setMessage("");
       })
-      .catch((err) => {});
+      .catch((err) => console.log(err.message));
   };
 
   return (
@@ -164,14 +177,14 @@ const ChatBot = () => {
         sx={{ backgroundColor: "primary.main" }}
       >
         <Typography fontSize="1.2rem" color="white">
-           ChatBot
+          ChatBot
         </Typography>
 
         <Box display="flex" alignItems="center" mr="1rem">
-        <Button sx={{ color: "white", mr: "0.5rem" }} onClick={logoutHandler}>
+          <Button sx={{ color: "white", mr: "0.5rem" }} onClick={logoutHandler}>
             Logout
           </Button>
-          <Avatar >{loggedInUser.name[0]}</Avatar>
+          <Avatar>{loggedInUser.name[0]}</Avatar>
         </Box>
       </Box>
 

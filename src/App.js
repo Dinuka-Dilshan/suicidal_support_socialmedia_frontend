@@ -6,6 +6,7 @@ import SignUp from "./components/SignUp/SignUp";
 import ChatBot from "./components/ChatBot/ChatBot";
 import { useLoggedUser } from "./components/context/userContext";
 import NotFound from "./components/NotFound/NotFound";
+import Test from "./Test";
 
 function App() {
   const loggedInUser = useLoggedUser();
@@ -26,7 +27,9 @@ function App() {
     </>
   );
 
-  return <Routes>{loggedInUser.name ? loggedInRoutes : normalRoutes}</Routes>;
+  // return <Routes>{loggedInUser.name ? loggedInRoutes : normalRoutes}</Routes>;
+
+  return <Test />;
 }
 
 export default App;

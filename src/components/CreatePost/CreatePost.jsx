@@ -45,7 +45,7 @@ const CreatePost = () => {
         formData.append("image", file);
 
         fetch(
-          "http://ec2-54-169-87-142.ap-southeast-1.compute.amazonaws.com:8082/suicide",
+          "http://ec2-3-0-181-36.ap-southeast-1.compute.amazonaws.com:8082/suicide",
           {
             body: formData,
             method: "POST",
@@ -76,13 +76,13 @@ const CreatePost = () => {
               navigate("/chatbot");
             }
           })
-          .catch((err) => console.log(err))
+          .catch((err) => console.log(err.message))
           .finally(() => {
             setIsLoading(false);
           });
       } else {
         fetch(
-          "http://ec2-54-169-87-142.ap-southeast-1.compute.amazonaws.com:8082/suicide",
+          "http://ec2-3-0-181-36.ap-southeast-1.compute.amazonaws.com:8082/suicide",
           {
             body: JSON.stringify({
               text: values.content,
